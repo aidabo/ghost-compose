@@ -1,26 +1,30 @@
 services:
-  ghost-prd:
+  ghost:
     image: ghost:5.89.3-alpine
-    container_name: ghost-prd
+    container_name: ghost
     restart: unless-stopped
     environment:
-      - NODE_ENV=production
-      - TZ=Asia/Tokyo    
-      - FRONT_END_URL=http://your.frontend.com
+      - TZ=Asia/Tokyo
+      - NODE_ENV=${GHOST_NODE_ENV}
+      - url={GHOST_BACKEND_URL}
+      - FRONT_END_URL=${GHOST_FRONT_END_URL}
+      - GHOST_DEBUG=${GHOST_DEBUG}
+      - LOG_lEVEL=${GHOST_LOG_LEVEL}
       # Production MYSQL configuration
       - database__client=mysql
       - database__connection__host=mysql
-      - database__connection__user=root
-      - database__connection__password=ghost
-      - database__connection__database=ghost
+      - database__connection__user=${GHOST_MYSQL_USER}
+      - database__connection__password=${GHOST_MYSQL_PASSWORD}
+      - database__connection__database=${GHOST_MYSQL_DB}
     ports:
       - "80:2368"
       - "465:465"
+      - "993:993"
     volumes:
       - ./ghost/content:/var/lib/ghost/content
       - ./ghost/mail:/var/lib/ghost/current/core/server/services/mail
       - type: bind
-        source: ./ghost/config/config.production.json
+        source: ./ghost/config/${GHOST_CONFIG_JSON}
         target: /var/lib/ghost/config.production.json
     depends_on:
       - mysql
@@ -30,10 +34,10 @@ services:
     container_name: ghost-mysql
     restart: always
     environment:
-      MYSQL_USER: root
+      MYSQL_USER: ${GHOST_MYSQL_USER}
       MYSQL_ROOT_PASSWORD: ghost
-      MYSQL_DATABASE: ghost
-      MYSQL_PASSWORD: ghost
+      MYSQL_DATABASE: ${GHOST_MYSQL_DB}
+      MYSQL_PASSWORD: ${GHOST_MYSQL_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
