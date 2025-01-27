@@ -1,12 +1,3 @@
-# Ghost-compose to deploy ghost as container
-
-## About Mail template
-
-Mail template is changed for custom front end, ghost is used as backend Api Server.
-
-### Set environment in compose 
-
-```yaml
 services:
   ghost-prd:
     image: ghost:5.89.3-alpine
@@ -15,7 +6,6 @@ services:
     environment:
       - NODE_ENV=production
       - TZ=Asia/Tokyo    
-#      - url=http://60-legacy.com
       - FRONT_END_URL=http://your.frontend.com
       # Production MYSQL configuration
       - database__client=mysql
@@ -48,4 +38,4 @@ services:
       - "3306:3306"
     volumes:
       - ./mysql-data:/var/lib/mysql
-```
+

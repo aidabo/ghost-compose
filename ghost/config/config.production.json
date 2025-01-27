@@ -1,0 +1,46 @@
+{
+  "url": "http://your.backend.com/",
+  "server": {
+    "port": 2368,
+    "host": "::"
+  },
+  "database": {
+    "client": "mysql"
+  },
+  "mail": {
+    "transport": "SMTP",
+    "options": {
+      "host": "your mail server host",
+      "port": 465,
+      "secure": true,
+      "from": "mail address",
+      "auth": {
+        "user": "mail address",
+        "pass": "password"
+      }
+    }    
+  },
+  "logging": {
+    "level": "trace",
+    "transports": [
+      "file",
+      "stdout"
+    ]
+  },
+  "process": "systemd",
+  "paths": {
+    "contentPath": "/var/lib/ghost/content"
+  },  
+  "storage": {
+    "active": "s3",
+    "media":  "s3",
+    "files":  "s3",
+    "images": "s3",
+    "s3": {
+      "accessKeyId": "Your Access Key",
+      "secretAccessKey": "Your SecretAccessKey",
+      "bucket": "Your bucket name",
+      "region": "your aws region"
+    }
+  }
+}
