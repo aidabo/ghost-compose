@@ -9,6 +9,7 @@ export GHOST_MYSQL_PASSWORD=mysql
 export GHOST_MYSQL_DB=ghost_db
 export GHOST_CONFIG_JSON=config.production.json
 export GHOST_DEBUG=false
-export GHOST_LOG_lEVEL=info
+export GHOST_LOG_LEVEL=info
+export GHOST_HOST_PORT=80
 
 

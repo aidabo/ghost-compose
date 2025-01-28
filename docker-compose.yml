@@ -6,7 +6,7 @@ services:
     environment:
       - TZ=Asia/Tokyo
       - NODE_ENV=${GHOST_NODE_ENV}
-      - url={GHOST_BACKEND_URL}
+#      - url={GHOST_BACKEND_URL}
       - FRONT_END_URL=${GHOST_FRONT_END_URL}
       - GHOST_DEBUG=${GHOST_DEBUG}
       - LOG_lEVEL=${GHOST_LOG_LEVEL}
@@ -17,7 +17,7 @@ services:
       - database__connection__password=${GHOST_MYSQL_PASSWORD}
       - database__connection__database=${GHOST_MYSQL_DB}
     ports:
-      - "80:2368"
+      - "${GHOST_HOST_PORT}:2368"
       - "465:465"
       - "993:993"
     volumes:
@@ -26,6 +26,8 @@ services:
       - type: bind
         source: ./ghost/config/${GHOST_CONFIG_JSON}
         target: /var/lib/ghost/config.production.json
+    networks:
+      - ghost-network
     depends_on:
       - mysql
 
@@ -42,4 +44,11 @@ services:
       - "3306:3306"
     volumes:
       - ./mysql-data:/var/lib/mysql
+    networks:
+      - ghost-network
+
+networks:
+  ghost-network:
+    external: true       
+
 
