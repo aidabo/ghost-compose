@@ -1,6 +1,7 @@
 services:
   ghost:
-    image: ghost:5.89.3-alpine
+    #image: ghost:5.89.3-alpine
+    image:  ghost:5.109.0-alpine    
     container_name: ghost
     restart: unless-stopped
     environment:
@@ -26,6 +27,8 @@ services:
       - type: bind
         source: ./ghost/config/${GHOST_CONFIG_JSON}
         target: /var/lib/ghost/config.production.json
+      - /etc/timezone:/etc/timezone:ro  # Mount host timezone file
+      - /etc/localtime:/etc/localtime:ro  # Mount host localtime file
     networks:
       - ghost-network
     depends_on:
