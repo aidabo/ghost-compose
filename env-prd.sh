@@ -2,8 +2,10 @@
 
 # Production
 export GHOST_NODE_ENV=production
-export GHOST_BACKEND_URL = http://your.backend.com
-export GHOST_FRONT_END_URL=https://your.customfront.com
+# don't set to https://60-legacy.com, otherwise will redirect to front end and get status 301 
+# on Next api/* function
+export GHOST_BACKEND_URL = http://localhost/ghost
+export GHOST_FRONT_END_URL=http://localhost
 export GHOST_MYSQL_USER=mysql
 export GHOST_MYSQL_PASSWORD=mysql
 export GHOST_MYSQL_DB=ghost_db
