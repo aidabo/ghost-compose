@@ -1,7 +1,7 @@
 services:
   ghost:
-    #image: ghost:5.89.3-alpine
-    image:  ghost:5.109.0-alpine    
+    image: ghost:5.89.3-alpine
+    #image:  ghost:5.109.0-alpine    
     container_name: ghost
     restart: unless-stopped
     environment:
@@ -24,6 +24,7 @@ services:
     volumes:
       - ./ghost/content:/var/lib/ghost/content
       - ./ghost/mail:/var/lib/ghost/current/core/server/services/mail
+      - ./ghost/auth:/var/lib/ghost/current/core/server/services/auth
       - type: bind
         source: ./ghost/config/${GHOST_CONFIG_JSON}
         target: /var/lib/ghost/config.production.json
@@ -50,6 +51,23 @@ services:
     networks:
       - ghost-network
 
+  # phpMyAdmin Service
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306 # MySQL port (default)
+      PMA_USER: mysql
+      PMA_PASSWORD: mysql
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - ghost-network
+      
 networks:
   ghost-network:
     external: true       
