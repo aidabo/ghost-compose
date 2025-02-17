@@ -2,10 +2,9 @@
 
 # Production
 export GHOST_NODE_ENV=production
-# don't set to https://60-legacy.com, otherwise will redirect to front end and get status 301 
-# on Next api/* function
-export GHOST_BACKEND_URL = http://localhost/ghost
-export GHOST_FRONT_END_URL=http://localhost
+# used by process.env for mail and other template
+export GHOST_BACKEND_URL = https://60-legacy.com/ghost
+export GHOST_FRONT_END_URL=https://60-legacy.com
 export GHOST_MYSQL_USER=mysql
 export GHOST_MYSQL_PASSWORD=mysql
 export GHOST_MYSQL_DB=ghost_db

@@ -50,3 +50,33 @@ xvdd     202:48   0   20G  0 disk
 `sudo mount /dev/xvdd mount_point`
 
 - To check you can perform ls mount_point
+
+- In prodution environment, set ghost url as following
+
+* config.production.json
+
+``` json
+  "url": "http://localhost/",
+  "server": {
+    "port": 2368,
+    "host": "::"
+  },
+  "admin": {
+          "url": "http://localhost/ghost"
+  },
+```
+
+* env-prd.sh
+
+```sh
+# Docker compose environment variables defined in host
+
+# Production
+export GHOST_NODE_ENV=production
+# used by process.env for mail and other template
+export GHOST_BACKEND_URL = https://60-legacy.com/ghost
+export GHOST_FRONT_END_URL=https://60-legacy.com
+```
+
+
+ 
