@@ -1,9 +1,80 @@
 services:
-  ghost:
-    image: ghost:5.89.3-alpine
-    #image:  ghost:5.109.0-alpine    
-    container_name: ghost
+#   ghost:
+#     image:  ghost:5.116-alpine
+#     container_name: ghost
+#     command: "sleep infinity"
+#     restart: unless-stopped
+#     environment:
+#       - TZ=Asia/Tokyo
+#       - NODE_ENV=${GHOST_NODE_ENV}
+# #      - url={GHOST_BACKEND_URL}
+#       - FRONT_END_URL=${GHOST_FRONT_END_URL}
+#       - GHOST_DEBUG=${GHOST_DEBUG}
+#       - LOG_lEVEL=${GHOST_LOG_LEVEL}
+#       # Production MYSQL configuration
+#       - database__client=mysql
+#       - database__connection__host=mysql
+#       - database__connection__user=${GHOST_MYSQL_USER}
+#       - database__connection__password=${GHOST_MYSQL_PASSWORD}
+#       - database__connection__database=${GHOST_MYSQL_DB}
+#     ports:
+#       - "${GHOST_HOST_PORT}:2368"
+#       - "465:465"
+#       - "993:993"
+#     volumes:
+#       - ./ghost/content:/var/lib/ghost/content
+#       - ./ghost/config/${GHOST_CONFIG_JSON}:/var/lib/ghost/config.production.json
+#       - ./ghost/mail:/var/lib/ghost/current/core/server/services/mail
+#       #- ./ghost/config/overrides.json:/var/lib/ghost/current/core/shared/config/overrides.json
+#       # - ./ghost/auth:/var/lib/ghost/current/core/server/services/auth
+#       # - ./ghost/middleware:/var/lib/ghost/current/core/server/web/api/middleware
+#       - /etc/timezone:/etc/timezone:ro  # Mount host timezone file
+#       - /etc/localtime:/etc/localtime:ro  # Mount host localtime file
+#     networks:
+#       - ghost-network
+#     depends_on:
+#       - mysql
+
+  # mysql:
+  #   build: ./mysql
+  #   container_name: ghost-mysql
+  #   restart: always
+  #   environment:
+  #     MYSQL_USER: ${GHOST_MYSQL_USER}
+  #     MYSQL_ROOT_PASSWORD: ghost
+  #     MYSQL_DATABASE: ${GHOST_MYSQL_DB}
+  #     MYSQL_PASSWORD: ${GHOST_MYSQL_PASSWORD}
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - ./mysql-data:/var/lib/mysql
+  #   networks:
+  #     - ghost-network
+
+  # # phpMyAdmin Service
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin:latest
+  #   container_name: phpmyadmin
+  #   restart: always
+  #   environment:
+  #     PMA_HOST: mysql
+  #     PMA_PORT: 3306 # MySQL port (default)
+  #     PMA_USER: mysql
+  #     PMA_PASSWORD: mysql
+  #     PHP_INI_SESSION_GC_MAXLIFETIME: 3600  # Session timeout in seconds (1 hour)
+  #     PHP_INI_SESSION_COOKIE_LIFETIME: 3600 # Cookie lifetime in seconds (1 hour)
+  #   ports:
+  #     - "8080:80"
+  #   depends_on:
+  #     - mysql
+  #   networks:
+  #     - ghost-network
+
+  ghost-next:
+    image: ghost:5.116.2-alpine-next
+    container_name: ghost-next
     restart: unless-stopped
+    # command: "sleep infinity"
     environment:
       - TZ=Asia/Tokyo
       - NODE_ENV=${GHOST_NODE_ENV}
@@ -13,18 +84,23 @@ services:
       - LOG_lEVEL=${GHOST_LOG_LEVEL}
       # Production MYSQL configuration
       - database__client=mysql
-      - database__connection__host=mysql
+      - database__connection__host=mysql-test
       - database__connection__user=${GHOST_MYSQL_USER}
       - database__connection__password=${GHOST_MYSQL_PASSWORD}
-      - database__connection__database=${GHOST_MYSQL_DB}
+      - database__connection__database=${GHOST_MYSQL_DB_TEST}
     ports:
-      - "${GHOST_HOST_PORT}:2368"
-      - "465:465"
-      - "993:993"
+      - "2368:2368"
+      # - "465:465"
+      # - "993:993"
     volumes:
+      # - ./ghost/node_modules:/var/lib/ghost/current/node_modules      
       - ./ghost/content:/var/lib/ghost/content
-      - ./ghost/mail:/var/lib/ghost/current/core/server/services/mail
-      - ./ghost/auth:/var/lib/ghost/current/core/server/services/auth
+      # - ./ghost/mail:/var/lib/ghost/current/core/server/services/mail
+      # - ./ghost/auth:/var/lib/ghost/current/core/server/services/auth
+      # - ./ghost/middleware:/var/lib/ghost/current/core/server/web/api/middleware
+      # - ./ghost/config/overrides.json:/var/lib/ghost/versions/5.115.1/core/shared/config/overrides.json
+      # - ./ghost/components:/var/lib/ghost/current/components
+      # - ./ghost/package.json:/var/lib/ghost/current/package.json
       - type: bind
         source: ./ghost/config/${GHOST_CONFIG_JSON}
         target: /var/lib/ghost/config.production.json
@@ -33,41 +109,43 @@ services:
     networks:
       - ghost-network
     depends_on:
-      - mysql
+      - mysql-test
 
-  mysql:
+  mysql-test:
     build: ./mysql
-    container_name: ghost-mysql
+    container_name: ghost-mysql-test
     restart: always
     environment:
       MYSQL_USER: ${GHOST_MYSQL_USER}
       MYSQL_ROOT_PASSWORD: ghost
-      MYSQL_DATABASE: ${GHOST_MYSQL_DB}
+      MYSQL_DATABASE: ${GHOST_MYSQL_DB_TEST}
       MYSQL_PASSWORD: ${GHOST_MYSQL_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql-data:/var/lib/mysql
+      - ./mysql-data-test:/var/lib/mysql
     networks:
       - ghost-network
 
-  # phpMyAdmin Service
-  phpmyadmin:
+  phpmyadmin-test:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin
+    container_name: phpmyadmin-test
     restart: always
     environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306 # MySQL port (default)
-      PMA_USER: mysql
-      PMA_PASSWORD: mysql
+      - PMA_ARBITRARY=0
+      - PMA_HOST=mysql-test
+      - PMA_PORT=3306 # MySQL port (default)
+      - PMA_USER=mysql
+      - PMA_PASSWORD=mysql
+      - PHP_INI_SESSION_GC_MAXLIFETIME=3600  # Session timeout in seconds (1 hour)
+      - PHP_INI_SESSION_COOKIE_LIFETIME=3600 # Cookie lifetime in seconds (1 hour)
     ports:
-      - "8080:80"
+      - "8888:80"
     depends_on:
-      - mysql
+      - mysql-test
     networks:
       - ghost-network
-      
+
 networks:
   ghost-network:
     external: true       
